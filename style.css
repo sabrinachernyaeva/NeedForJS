@@ -5,6 +5,6 @@
 .car {
     width: 50px;
     height: 100px;
-    background: transparent url('./image/player.png') center / cover no-repeat;
+    background: transparent url('./image/enemy2.png') center / cover no-repeat;
 
 }
