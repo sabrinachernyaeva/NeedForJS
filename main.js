@@ -30,34 +30,49 @@ car.classList.add('car');
 
    function startGame(){
        start.classList.add('hide');
-          for (let i = 0; i < getQuantityElements(100); i++){
-          const line = document.createElement('div');
-          line.classList.add('line');
-          line.style.top = (i*75) + 'px'; 
-          line.y = i * 100;
-          gameArea.appendChild(line);
+       gameArea.innerHTML = '';
+       for (let i = 0; i < getQuantityElements(100); i++){
+        const line = document.createElement('div');
+        line.classList.add('line');
+        line.style.top = (i * 100) + 'px'; 
+        line.y = i * 100;
+        gameArea.appendChild(line);
        }
 
        for (let i = 0; i < getQuantityElements(100 * setting.traffic); i++){
-       const enemy = document.createElement('div');
-       enemy.classList.add('enemy');
-       enemy.y = -100 * setting.traffic * (i + 1);
-       enemy.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - 50)) + 'px';
-       enemy.style.top = enemy.y + 'px';
-       enemy.style.backgroundc = 'transparent url(./image/enemy4.png) center / cover no-repeat;';
-       gameArea.appendChild(enemy);
-       }
+        const enemy = document.createElement('div');
+        enemy.classList.add('enemy');
+        enemy.y = -100 * setting.traffic * (i + 1);
+        enemy.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - 50)) + 'px';
+        enemy.style.top = enemy.y + 'px';
+        enemy.style.background = 'transparent url(./image/enemy4.png) center / cover no-repeat';
+        gameArea.appendChild(enemy);
+        }
 
+       setting.score = 0;
        setting.start = true;
        gameArea.appendChild(car);
+       car.style.left = gameArea.offsetWidth/2 - car.offsetWidth/2;
+       console.log ('car.style.left: ', car.style.left);
+       car.style.top = 'auto';
+       car.style.bottom = '10px';
        setting.x = car.offsetLeft;
        setting.y = car.offsetTop;
        requestAnimationFrame(playGame);
-   }
+ 
+
+       car.style.left = gameArea.offsetWidth/2 - car.offsetWidth/2;
+       console.log ('car.style.left: ', car.style.left);
+       car.style.top = 'auto';
+       car.style.bottom = '10px';
+    }
+         
 
    function playGame(){
 
        if(setting.start){
+           setting.score += setting.speed;
+           score.innerHTML = 'SCORE<br>' + setting.score;
        moveRoad();
        moveEnemy();
        if (keys.ArrowLeft && setting.x > 0){
@@ -109,7 +124,22 @@ car.classList.add('car');
 
     function moveEnemy(){
         let enemy = document.querySelectorAll('.enemy');
+
         enemy.forEach(function(item){
+            let carRect = car.getBoundingClientRect();
+            let enemyRect = item.getBoundingClientRect();
+
+            if (carRect.top <= enemyRect.bottom &&
+                carRect.right >= enemyRect.left &&
+                carRect.left <= enemyRect.right &&
+                carRect.bottom >= enemyRect.top){
+                    setting.start = false;
+                console.warn('ДТП');
+                start.classList.remove('hide');
+                start.style.top = score.offsetHeight;
+            }
+        
+
         item.y += setting.speed / 2;
         item.style.top = item.y + 'px';
         if (item.y >= document.documentElement.clientHeight){
@@ -117,5 +147,7 @@ car.classList.add('car');
             item.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - 50)) + 'px';
         }
         });
+
+   }
 
     }
